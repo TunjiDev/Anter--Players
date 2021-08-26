@@ -1,0 +1,7 @@
+{
+  "name": "IonicTriviaApp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
