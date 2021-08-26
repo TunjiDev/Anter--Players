@@ -59,7 +59,7 @@ const Question = () => {
   };
 
   const resetQuiz = () => {
-    clearTimeout(t1);
+   
     setTimer(TIMER_START_VALUE);
     setRevealAnswers(false);
     setStage(stage + 1);
@@ -85,37 +85,29 @@ const Question = () => {
 
   const handleHide = () => {
     setHideOption(true);
-    const index = Math.floor(Math.random() * 2);
-   
+    //const index = Math.floor(Math.random() * 2);
    
     const wrongAnswer = currentQuestion.answerOptions.findIndex(
       (option) => option !== currentQuestion.answer
     );
     setIndex(wrongAnswer)
-    const rightAnswer = currentQuestion.answerOptions.find(
-      (option) => option === currentQuestion.answer
-    );
-    console.log(wrongAnswer)
-    // wrongAnswers.splice(index, 1);
-    // console.log(rightAnswer);
-    // setNewOptions([...wrongAnswers, rightAnswer]);
+     
   };
 
   return (
     <div className="questions__container" style={{ color: "white" }}>
       <Header handleHide={handleHide} />
-
       {currentQuestionIndex < questions.length ? (
         <div className="questions__QandA">
           <div className="questions__timer">
             <span className="timer">{timer}</span>
           </div>
-          {/* <div className="timer-wrapper">
+          <div className="timer-wrapper">
             <div
               className={`timer-countdown-bar ${low && "red"}`}
               style={{ width: (timer / TIMER_START_VALUE) * 100 + "%" }}
             ></div>
-          </div> */}
+          </div>
           <div className="question-count">
             <span>Question {currentQuestionIndex + 1}</span>/{questions.length}
           </div>
