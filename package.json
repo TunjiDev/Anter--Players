@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@capacitor-community/contacts": "^1.0.9",
     "@capacitor/android": "^3.1.2",
     "@capacitor/app": "1.0.2",
     "@capacitor/camera": "^1.0.3",
@@ -22,6 +23,7 @@
     "@fortawesome/free-regular-svg-icons": "^5.12.1",
     "@fortawesome/free-solid-svg-icons": "^5.12.1",
     "@fortawesome/react-fontawesome": "^0.1.8",
+    "@ionic-native/contacts": "^5.36.0",
     "@ionic/pwa-elements": "^3.0.2",
     "@ionic/react": "^5.5.0",
     "@ionic/react-router": "^5.5.0",
@@ -38,6 +40,7 @@
     "@types/react-router-dom": "^5.1.7",
     "axios": "^0.21.1",
     "base64toblob": "^0.0.2",
+    "cordova-plugin-contacts": "^3.0.1",
     "cordova-plugin-local-notification": "^0.9.0-beta.2",
     "country-telephone-data": "^0.6.3",
     "ionicons": "^5.4.0",

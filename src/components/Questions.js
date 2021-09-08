@@ -5,10 +5,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircle as faCircleRegular } from "@fortawesome/free-regular-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { AiFillHeart } from "react-icons/ai";
 import Nav from "./NavLink";
 import Header from "./Header";
 import { useHistory } from "react-router-dom";
 import { Store } from "../context/Store";
+import Powerups, { LostLife } from "./Powerups";
 const Question = () => {
   const history = useHistory();
   const TIMER_START_VALUE = 10;
@@ -25,15 +27,19 @@ const Question = () => {
   const [stage, setStage] = useState(2);
   const [difficultyLevel, setDifficultyLevel] = useState("Easy");
   const [apiQuestions, setApiQuestions] = useState([state.Questions]);
-  const [indexx,setIndex] = useState()
-
+  const [indexx, setIndex] = useState();
+  const [lives, setLives] = useState(3);
+  const [clickedBtn, setClickedBtn] = useState(false);
+  const [gameOver, setGameOver] = useState(false);
+  const [gameModal, setGameModal] = useState(false);
   const [questions, setQuestions] = useState(state.Questions.easy);
-   let t1;
+  let t1;
   useEffect(() => {
     updateTimer();
     if (timer < 5) {
       setLow(true);
     }
+    if (timer === 0) failHandler();
     return () => {
       clearTimeout(t1);
     };
@@ -42,24 +48,22 @@ const Question = () => {
   const currentQuestion = questions[currentQuestionIndex];
   const updateTimer = () => {
     if (!revealAnswers && timer > 0) {
-    t1=  setTimeout(() => setTimer(timer - 1), 1000);
-    } else {
-      setRevealAnswers(true);
+      t1 = setTimeout(() => setTimer(timer - 1), 1000);
     }
   };
 
   const handleNextQuestionClick = () => {
     setRevealAnswers(false);
+    setGameModal(false);
     setLow(false);
     setHideOption(false);
-    setIndex(null)
+    setIndex(null);
     setCurrentQuestionIndex(currentQuestionIndex + 1);
     setTimer(TIMER_START_VALUE);
     currentQuestionIndex > questions.length && setStage(stage + 1);
   };
 
   const resetQuiz = () => {
-   
     setTimer(TIMER_START_VALUE);
     setRevealAnswers(false);
     setStage(stage + 1);
@@ -70,8 +74,16 @@ const Question = () => {
     stage === 3 && setQuestions(state.Questions.difficult);
     console.log(difficultyLevel);
   };
+  const failHandler = () => {
+    if (lives > 1) {
+      setLives((prev) => prev - 1);
+      setGameModal(true);
+    }
+    if (lives === 0) setGameOver(true);
+  };
 
   const handleAnswerClick = (selectedAnswer) => {
+    setClickedBtn(true);
     if (revealAnswers) {
       return;
     }
@@ -79,24 +91,27 @@ const Question = () => {
 
     if (selectedAnswer === currentQuestion.answer) {
       setScore(score + 1);
+      setRevealAnswers(true);
+      setClickedBtn(false);
+    } else {
+      failHandler();
+      setClickedBtn(false);
     }
-    setRevealAnswers(true);
   };
 
   const handleHide = () => {
     setHideOption(true);
     //const index = Math.floor(Math.random() * 2);
-   
+
     const wrongAnswer = currentQuestion.answerOptions.findIndex(
       (option) => option !== currentQuestion.answer
     );
-    setIndex(wrongAnswer)
-     
+    setIndex(wrongAnswer);
   };
 
   return (
     <div className="questions__container" style={{ color: "white" }}>
-      <Header handleHide={handleHide} />
+      <Powerups lives={lives} />
       {currentQuestionIndex < questions.length ? (
         <div className="questions__QandA">
           <div className="questions__timer">
@@ -114,24 +129,22 @@ const Question = () => {
           <div className="questions__display">
             {currentQuestion.questionText}?
           </div>
-           
-            <div>
-              {currentQuestion.answerOptions.map((answerOption, index) => (
-                <div key={index} className="answer-item">
-                  <AnswerButton
-                    answerOption={answerOption}
-                    isCorrectAnswer={answerOption === currentQuestion.answer}
-                    isSelectedAnswer={answerOption === selectedAnswer}
-                    revealAnswers={revealAnswers}
-                    handleAnswerClick={handleAnswerClick}
-                    index={index}
-                    indexx={indexx}
-                  />
-                </div>
-              ))}
-            </div>
-          
-          
+
+          <div>
+            {currentQuestion.answerOptions.map((answerOption, index) => (
+              <div key={index} className="answer-item">
+                <AnswerButton
+                  answerOption={answerOption}
+                  isCorrectAnswer={answerOption === currentQuestion.answer}
+                  isSelectedAnswer={answerOption === selectedAnswer}
+                  revealAnswers={revealAnswers}
+                  handleAnswerClick={handleAnswerClick}
+                  index={index}
+                  indexx={indexx}
+                />
+              </div>
+            ))}
+          </div>
 
           {revealAnswers && (
             <button onClick={handleNextQuestionClick} className="btn next-btn">
@@ -183,7 +196,7 @@ const Question = () => {
             </div>
 
             <button onClick={resetQuiz} className="btn startGame">
-              Start The Next Game
+              Level {stage + 1}
             </button>
 
             <button
@@ -195,6 +208,12 @@ const Question = () => {
             </button>
           </div>
         </div>
+      )}
+      {gameModal && (
+        <LostLife
+          close={() => setGameModal(false)}
+          next={handleNextQuestionClick}
+        />
       )}
     </div>
   );
@@ -225,11 +244,13 @@ const AnswerButton = ({
 
   return (
     <div
-      className={`questions__options ${index===indexx? 'hide':null}`}
+      className={`questions__options ${index === indexx ? "hide" : null}`}
       style={{ backgroundColor: backgroundColor, color: "white" }}
       onClick={() => handleAnswerClick(answerOption)}
     >
-      <FontAwesomeIcon className="answer-item-circle" icon={icon} />
+      <div>
+        <FontAwesomeIcon className="answer-item-circle" icon={icon} />
+      </div>
 
       {answerOption}
     </div>

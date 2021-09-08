@@ -15,6 +15,7 @@ const VerifyCode = () => {
   const history = useHistory();
   const [resendLoading, setResendLoading] = useState(false);
   const [resendError, setResendError] = useState("");
+
   //Using useEffect so it will run at the start
   useEffect(() => {
     const timer =
@@ -38,6 +39,13 @@ const VerifyCode = () => {
     if (element.nextSibling) {
       element.nextSibling.focus();
     }
+  };
+
+  const setToken = async (data) => {
+    await set("token", data.token);
+  };
+  const setTest = async () => {
+    await set("test", { test: "test" });
   };
 
   useEffect(() => {
@@ -87,8 +95,7 @@ const VerifyCode = () => {
     setError(false);
     setLoading(true);
     e.preventDefault();
-    const code = +otp.join("");
-    console.log(code);
+    const code = +otp.join("")
     setOtp(new Array(4).fill(""));
     fetch("https://anter-trivia-game.herokuapp.com/api/v1/user/verify", {
       method: "POST",
@@ -97,23 +104,22 @@ const VerifyCode = () => {
         "Content-Type": "application/json",
       },
     })
-      .then((res) => {
-        console.log(res);
+      .then(async (res) => {
         setLoading(false);
         if (res.ok) {
           return res.json();
         } else {
-          return res.json().then((data) => {
-            setError(true);
-            setServerError(data.message);
-            console.log(data);
-            throw new Error(data.message);
-          });
+          const data = await res.json();
+          setError(true);
+          setServerError(data.message);
+          throw new Error(data.message);
         }
       })
       .then((data) => {
-        console.log(data);
-        set("token", data.token);
+        console.log(data, "from verify code");
+
+        setToken(data);
+
         history.push("/chooseusername");
       })
       .catch((err) => {

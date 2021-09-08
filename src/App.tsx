@@ -2,8 +2,8 @@ import { Redirect, Route, Switch } from "react-router-dom";
 import { IonApp, IonRouterOutlet } from "@ionic/react";
 import { SplashScreen } from "@capacitor/splash-screen";
 import { IonReactRouter } from "@ionic/react-router";
-import { useEffect ,useState} from "react";
-import axios from 'axios'
+import { useEffect, useState } from "react";
+import axios from "axios";
 import "./components/style.css";
 import "./components/style2.css";
 /* Core CSS required for Ionic components to work properly */
@@ -36,57 +36,77 @@ import Friends from "./pages/Friends";
 import LiveGame from "./pages/LiveGame";
 import QuestionPage from "./pages/QuestionPage";
 import SelectLevelPage from "./pages/SelectLevel";
+import LiveParticipants from "./pages/LiveParticipants";
+import { get } from "./context/Store";
 
 const App: React.FC = () => {
-  const [questions, setQuestions]= useState(null)
+  const [questions, setQuestions] = useState(null);
+  const token = localStorage.getItem("token");
+  const token2 = token !== null ? JSON.parse(token) : "";
+
+  //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxM…zA5fQ.0vEIKfDWsHxEvxHedvN3W07z02u02q-N9y1WF4u6rZU
   useEffect(() => {
     SplashScreen.hide();
   }, []);
- 
+
   return (
     <IonApp>
       <IonReactRouter>
         <IonRouterOutlet>
-         <Switch> <Route exact path="/login">
-            <Login />
-          </Route>
-          <Route exact path="/splashscreen">
-            <SplashScreenPage />
-          </Route>
-          <Route exact path="/verifycode">
-            <VerifyCode />
-          </Route>
-         
-          <Route exact path="/homepage">
-            <HomePagee />
-          </Route>
-          <Route  path="/profile">
-            <ProfilePage />
-          </Route>
-          <Route exact path="/rankingpage">
-            <RankingPage />
-          </Route>
-          <Route exact path="/extra">
-            <ExtraPage />
-          </Route>
-          <Route exact path="/friends">
-            <Friends />
-          </Route>
-          <Route exact path="/livegame">
-            <LiveGame />  
-          </Route>
-          <Route exact path="/chooseusername">
-            <ChooseUsername />
-          </Route>
-          <Route exact path="/">
-            <Redirect to="/splashscreen" />
-          </Route>
-          <Route exact path="/question">
-            <QuestionPage />
-          </Route>
-          <Route exact path="/selectlevel">
-            <SelectLevelPage/>
-          </Route>
+          <Switch>
+            <Route exact path="/login">
+              <Login />
+            </Route>
+            <Route exact path="/splashscreen">
+              <SplashScreenPage />
+            </Route>
+            <Route exact path="/verifycode">
+              <VerifyCode />
+            </Route>
+            <Route exact path="/homepage">
+              <HomePagee />
+            </Route>
+            <Route path="/profile">
+              <ProfilePage />
+            </Route>
+            <Route exact path="/live-participants/:name">
+              <LiveParticipants />
+            </Route>
+            <Route exact path="/rankingpage">
+              <RankingPage />
+            </Route>
+            <Route exact path="/extra">
+              <ExtraPage />
+            </Route>
+            <Route exact path="/friends">
+              <Friends />
+            </Route>
+            <Route exact path="/livegame">
+              <LiveGame />
+            </Route>
+            <Route exact path="/chooseusername">
+              <ChooseUsername />
+            </Route>
+            {/* <Route exact path="/">
+              <Redirect to={token ? "homepage" : "/splashscreen"} />
+            </Route>
+
+            <Route exact path="/">
+              <Redirect to={token ? "homepage" : "/splashscreen"} />
+            </Route> */}
+            <Route
+              path="/"
+              exact
+              render={(props) =>
+                token2 === "" ? <SplashScreenPage /> : <HomePagee />
+              }
+            />
+            <Route exact path="/question">
+              <QuestionPage />
+            </Route>
+            <Route exact path="/selectlevel">
+              <SelectLevelPage />
+            </Route>
           </Switch>
         </IonRouterOutlet>
       </IonReactRouter>
@@ -95,3 +115,4 @@ const App: React.FC = () => {
 };
 
 export default App;
+export {};

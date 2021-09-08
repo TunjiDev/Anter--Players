@@ -1,0 +1,96 @@
+.wifi__container {
+  width: 500px;
+  height: 500px;
+  background: white;
+}
+/* .friends__container {
+  background: yellow;
+} */
+.circle__wifi {
+  background: #d5d5d5;
+  height: 50px;
+  width: 50px;
+  border-radius: 50px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0px;
+  animation: glow1 5s infinite;
+}
+@keyframes glow1 {
+  19% {
+    background: #d5d5d5;
+  }
+  20% {
+    background: red;
+  }
+  100% {
+    background: red;
+  }
+}
+.border__wifi {
+  height: 150px;
+  width: 150px;
+  border: 50px solid transparent;
+  border-top: 50px solid #d5d5d5;
+  border-radius: 50%;
+  top: -50px;
+  right: -50px;
+  animation: glow2 5s infinite;
+}
+@keyframes glow2 {
+  39% {
+    border-top-color: #d5d5d5;
+  }
+  40% {
+    border-top-color: red;
+  }
+  100% {
+    border-top-color: red;
+  }
+}
+.border__wifi:before {
+  position: absolute;
+  content: "";
+  height: 330px;
+  width: 330px;
+  right: -140px;
+  border: 50px solid transparent;
+  border-top: 50px solid #d5d5d5;
+  border-radius: 50%;
+  animation: glow3 5s infinite;
+}
+@keyframes glow3 {
+  59% {
+    border-top-color: #d5d5d5;
+  }
+  60% {
+    border-top-color: red;
+  }
+  100% {
+    border-top-color: red;
+  }
+}
+.border__wifi:after {
+  position: absolute;
+  content: "";
+  height: 520px;
+  width: 520px;
+  right: -235px;
+  top: -250px;
+  border: 50px solid transparent;
+  border-top: 50px solid #d5d5d5;
+  border-radius: 50%;
+  animation: glow4 5s infinite;
+}
+@keyframes glow4 {
+  79% {
+    border-top-color: #d5d5d5;
+  }
+  80% {
+    border-top-color: red;
+  }
+  100% {
+    border-top-color: red;
+  }
+}
