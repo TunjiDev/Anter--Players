@@ -14,7 +14,7 @@ import { IonSpinner } from "@ionic/react";
 
 const HomePage = () => {
   const history = useHistory();
-  const { state, dispatch } = useContext(Store);
+  const { state, dispatch, redirectToGameZone } = useContext(Store);
   const [loading, setLoading] = useState(false);
   const [livegames, setLivegames] = useState([]);
 
@@ -40,7 +40,6 @@ const HomePage = () => {
         }
       })
       .then((data) => {
-        console.log(data, "livegame");
         const livegames = data.data.livegames;
         setLivegames(livegames);
         dispatch({ type: "ADDALLLIVEGAME", payload: livegames });
@@ -57,6 +56,7 @@ const HomePage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log(data);
         if (data.message) throw new Error(data.message);
         else {
           dispatch({
@@ -68,18 +68,20 @@ const HomePage = () => {
               erasers: data.user.erasers,
               extraLives: data.user.extraLives,
               phone: data.user.phone,
-              activeGames: data.user.activeGame,
+              activeGames: data.user.activeGames,
               // profilePicture: data.user.profilePicture,
             },
           });
-          setLoading(false);
         }
       })
       .catch((err) => console.log(err));
   };
   useEffect(() => {
-    if (JSON.stringify(state.userDetails) === "{}") getUser();
-  }, []);
+    if (JSON.stringify(state.userDetails) === "{}" || state.reload) {
+      getUser();
+    }
+    redirectToGameZone();
+  }, [state]);
 
   return (
     <div className="container" style={{ color: "white" }}>

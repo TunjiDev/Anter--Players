@@ -20,8 +20,9 @@ const FalseTime = ({ setGameMode }) => {
   const checkGame = () => {
     const inIt = [];
     const allActiveGames = state.userDetails.activeGames;
+
     allActiveGames.forEach((a) => {
-      if (a._id === state.currentLiveGame._id) {
+      if (a.categoryId === state.currentLiveGame._id) {
         inIt.push(state.currentLiveGame);
         setMessage("You have successfully joined this live game.");
       }
@@ -92,6 +93,10 @@ const FalseTime = ({ setGameMode }) => {
             type: "ADDINFO",
             payload: { ...state.userDetails, coins: remnant },
           });
+          dispatch({
+            type: "RELOADHOMEPAGE",
+            payload: true,
+          });
         }
         setLoadingJoin(false);
         setHidePayBtn(true);
@@ -154,9 +159,3 @@ const FalseTime = ({ setGameMode }) => {
 };
 
 export default FalseTime;
-
-// time.split(4,7) for month
-// time.split(8, 10) for day
-// time.split(11, 15) for day
-// time.split(16, 21) for time
-// +year.split(0, 2)-1 for year
