@@ -19,8 +19,9 @@ const Countdown = ({ startGame }) => {
 
   return (
     <div className="countdown__overlay">
+      <h1 className="ready__h1">ARE YOU READY?!!!</h1>
       <span className="seconds__animation">{seconds}</span>
-      {seconds === 1 && <span className="lets-go">Let's go!</span>}
+      {seconds <= 1 && <span className="lets-go">Let's go!</span>}
     </div>
   );
 };

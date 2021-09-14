@@ -506,6 +506,9 @@ body {
 .startGame {
   width: 100%;
 }
+.shortbtn {
+  width: 50%;
+}
 
 .navigation {
   position: fixed;
@@ -1517,10 +1520,9 @@ body {
 }
 .life__modal {
   background-color: #8a2be2;
-  /* background-color: #d48585; */
   color: white;
   padding: 10px 20px;
-  height: 300px;
+  height: 100px;
   min-width: 300px;
   position: fixed;
   transform: translate(-50%, -50%);
@@ -1535,6 +1537,27 @@ body {
   justify-content: center;
   align-items: center;
   align-content: center;
+}
+.redirect__modal {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  height: 100px;
+  min-width: 80%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 9999;
+  box-shadow: 0 12px 15px 0 rgb(0 0 0 / 25%);
+  animation: sliding 1s;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  font-weight: bold;
 }
 
 @keyframes sliding {
@@ -1560,9 +1583,14 @@ body {
   justify-content: center;
   align-items: center;
   align-content: center;
-  background-color: black;
-  opacity: 0.5;
+  color: white;
+  background-color: #8a2be2;
+
   font-size: 300px;
+}
+.ready__h1 {
+  position: absolute;
+  top: 150px;
 }
 .seconds__animation {
   animation: enlarge 1s infinite;
@@ -1587,10 +1615,57 @@ body {
   }
 }
 .lets-go {
-  color: #54178d;
+  /* color: #54178d; */
   font-size: 40px;
   animation: bounce 1s;
   display: block;
   margin-top: 100px;
   z-index: 999999999;
+}
+.wifi__container {
+  width: 50%;
+  height: 50%;
+  border: 1px solid green;
+  display: flex;
+  align-items: center;
+  align-content: center;
+}
+.wifi__circle {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: white;
+}
+.wifi__border1 {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border-color: transparent;
+  border-top: 60px solid white;
+}
+.wifi__border2 {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border-color: transparent;
+  border-top: 60px solid white;
+}
+
+.wifi__border3 {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  border-color: transparent;
+  border-top: 60px solid white;
+}
+.game_mode_div {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.error__span {
+  margin-top: 20px;
 }

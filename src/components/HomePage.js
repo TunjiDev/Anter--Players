@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { useHistory } from "react-router";
 import yellowCoin from "../img/yellow-coin.svg";
 import undrawVidGame from "../img/undraw_video_game_night_8h8m 2.svg";
@@ -11,12 +11,15 @@ import Header from "./Header";
 import notifications from "./LocalNotification";
 import LivegameList from "./LivegameList";
 import { IonSpinner } from "@ionic/react";
+import RedirectModal from "./RedirectModal";
 
 const HomePage = () => {
   const history = useHistory();
-  const { state, dispatch, redirectToGameZone } = useContext(Store);
+  const { state, dispatch, redirectToGameZone, interval } = useContext(Store);
   const [loading, setLoading] = useState(false);
   const [livegames, setLivegames] = useState([]);
+  const [redirectModal, setRedirectModal] = useState(false);
+  const [liveId, setLiveId] = useState("");
 
   const getUser = async () => {
     setLoading(true);
@@ -57,6 +60,7 @@ const HomePage = () => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data);
+        setLoading(false);
         if (data.message) throw new Error(data.message);
         else {
           dispatch({
@@ -69,18 +73,29 @@ const HomePage = () => {
               extraLives: data.user.extraLives,
               phone: data.user.phone,
               activeGames: data.user.activeGames,
-              // profilePicture: data.user.profilePicture,
+              profilePicture: data.user.profilePicture,
             },
           });
         }
       })
       .catch((err) => console.log(err));
   };
+
   useEffect(() => {
-    if (JSON.stringify(state.userDetails) === "{}" || state.reload) {
+    if (state.reload || JSON.stringify(state.userDetails) === "{}") {
       getUser();
     }
+    const currentTimer = interval.current;
+    return () => {
+      clearInterval(currentTimer);
+    };
+  }, []);
+  useEffect(() => {
     redirectToGameZone();
+    if (state.isTime[0]) {
+      setRedirectModal(true);
+      setLiveId(state.isTime[1].categoryId);
+    }
   }, [state]);
 
   return (
@@ -111,6 +126,8 @@ const HomePage = () => {
             justifyContent: "center",
             alignContent: "center",
             alignItems: "center",
+            margin: "auto",
+            color: "white",
           }}
         />
       ) : (
@@ -118,6 +135,7 @@ const HomePage = () => {
       )}
 
       <Nav />
+      {redirectModal && <RedirectModal liveId={liveId} />}
     </div>
   );
 };

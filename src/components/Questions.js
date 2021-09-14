@@ -147,7 +147,7 @@ const Question = () => {
 
     setTimeout(() => {
       handleNextQuestionClick();
-    }, 15 00);
+    }, 1500);
   };
 
   const useEraser = () => {

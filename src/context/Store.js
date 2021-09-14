@@ -16,6 +16,7 @@ const initialState = {
   currentLiveGame: {},
   allLiveGames: [],
   reload: false,
+  isTime: [],
 
   Questions: [
     {
@@ -110,6 +111,8 @@ function reducer(state, action) {
       return { ...state, allLiveGames: action.payload };
     case "RELOADHOMEPAGE":
       return { ...state, reload: action.payload };
+    case "ITSTIME":
+      return { ...state, isTime: action.payload };
     default:
       return state;
   }
@@ -140,41 +143,49 @@ export function StoreProvider(props) {
   };
 
   const redirectToGameZone = () => {
-    console.log(state.userDetails, "from store");
-    state.userDetails.activeGames?.forEach((activeGame) => {
-      const { year, month, day, hour, minute, seconds } =
-        convertTime(activeGame);
-      const countDownTime = new Date(
-        +year,
-        +month,
-        +day,
-        +hour,
-        +minute,
-        +seconds,
-        +seconds
-      ).getTime();
+    interval = setInterval(() => {
+      state.userDetails.activeGames?.forEach((activeGame) => {
+        const countDownTime = new Date(+activeGame.gameTime).getTime();
 
-      console.log("calling everytime");
-      const now = new Date().getTime();
-      let differenceInTimes = countDownTime - now;
-      const hours = Math.floor(
-        (differenceInTimes % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
-      );
-      const minutes = Math.floor(
-        (differenceInTimes % (1000 * 60 * 60)) / (1000 * 60)
-      );
-      const seconds2 = Math.floor((differenceInTimes % (1000 * 60)) / 1000);
+        const now = new Date().getTime();
+        let differenceInTimes = countDownTime - now;
+        const hours = Math.floor(
+          (differenceInTimes % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+        );
+        const minutes = Math.floor(
+          (differenceInTimes % (1000 * 60 * 60)) / (1000 * 60)
+        );
+        const seconds2 = Math.floor((differenceInTimes % (1000 * 60)) / 1000);
+        // console.log(minutes, "minutes", seconds2, "seconds2");
 
-      if (hours === 0 && minutes === 2 && seconds2 === 0) {
-        history.push(`live-participants/${activeGame.categoryId}`);
-        gameZoneEndPoint(activeGame.categoryId);
-      } else {
-        console.log("did not work");
-      }
+        if (hours === 0 && minutes === 2 && seconds2 === 0) {
+          gameZoneEndPoint(activeGame.categoryId);
+          clearInterval(interval.current);
+        } else if (hours === 0 && minutes === 0 && seconds2 === 10) {
+          dispatch({
+            type: "ITSTIME",
+            payload: [true, activeGame],
+          });
+        } else {
+          console.log("did not work");
+        }
+      });
+    }, 1000);
+  };
+  const updateHomePage = () => {
+    dispatch({
+      type: "RELOADHOMEPAGE",
+      payload: true,
     });
   };
 
-  const value = { state, dispatch, redirectToGameZone };
+  const value = {
+    state,
+    dispatch,
+    redirectToGameZone,
+    interval,
+    updateHomePage,
+  };
 
   return <Store.Provider value={value}>{props.children}</Store.Provider>;
 }

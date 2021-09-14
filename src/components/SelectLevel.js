@@ -32,7 +32,6 @@ const SelectLevel = () => {
   // }
 
   const history = useHistory();
-  console.log(history, "historyObj");
   return (
     <div className="questions" style={{ color: "white" }}>
       <form action="" className="questions__select">
