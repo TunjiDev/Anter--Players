@@ -1,6 +1,6 @@
 import Nav from "./NavLink";
 import "./styles3.css"
-import {useState} from react
+import {useState} from "react"
 // import { Plugins } from "@capacitor/core";
 // const { Contacts } = Plugins;
 
