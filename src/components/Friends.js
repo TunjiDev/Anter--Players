@@ -16,7 +16,7 @@ const [contacts, setContacts] = useState([])
 Contacts?.getContacts().then((result) => {
       console.log(result);
       localStorage.setItem("contacts", JSON.stringify(result.contacts))
-setContacts(results)     })
+setContacts(result)     })
   
   return (
     <div>
