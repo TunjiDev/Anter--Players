@@ -43,6 +43,7 @@ const HomePage = () => {
         }
       })
       .then((data) => {
+        console.log(data, "livegames");
         const livegames = data.data.livegames;
         setLivegames(livegames);
         dispatch({ type: "ADDALLLIVEGAME", payload: livegames });
@@ -59,7 +60,7 @@ const HomePage = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data);
+        console.log(data, "user details");
         setLoading(false);
         if (data.message) throw new Error(data.message);
         else {
@@ -85,11 +86,18 @@ const HomePage = () => {
     if (state.reload || JSON.stringify(state.userDetails) === "{}") {
       getUser();
     }
+    dispatch({
+      type: "RELOADHOMEPAGE",
+      payload: false,
+    });
+    dispatch({ type: "ADDCURRENTLIVEGAME", payload: [] });
     const currentTimer = interval.current;
+
     return () => {
       clearInterval(currentTimer);
     };
   }, []);
+
   useEffect(() => {
     redirectToGameZone();
     if (state.isTime[0]) {
@@ -127,6 +135,7 @@ const HomePage = () => {
             alignContent: "center",
             alignItems: "center",
             margin: "auto",
+            marginTop: "50px",
             color: "white",
           }}
         />

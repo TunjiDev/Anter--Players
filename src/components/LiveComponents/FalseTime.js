@@ -6,7 +6,7 @@ import { IonSpinner } from "@ionic/react";
 import { Store, get } from "../../context/Store";
 
 const FalseTime = ({ setGameMode, gameTime }) => {
-  const { dispatch, state, updateHomePage } = useContext(Store);
+  const { dispatch, state } = useContext(Store);
   const history = useHistory();
   const [message, setMessage] = useState("");
   const [timerHour, setTimerHour] = useState("00");
@@ -20,7 +20,7 @@ const FalseTime = ({ setGameMode, gameTime }) => {
     const inIt = [];
     const allActiveGames = state.userDetails.activeGames;
 
-    allActiveGames.forEach((a) => {
+    allActiveGames?.forEach((a) => {
       if (a.categoryId === state.currentLiveGame._id) {
         inIt.push(state.currentLiveGame);
         setMessage("You have successfully joined this live game.");
@@ -73,22 +73,20 @@ const FalseTime = ({ setGameMode, gameTime }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        if (data.message) setMessage(data.message);
-        else {
-          const remnant =
-            state.userDetails.coins - state.currentLiveGame.entryFee;
-          dispatch({
-            type: "ADDINFO",
-            payload: {},
-          });
+        if (data.message !== "You have successfully joined this live game!") {
+          setMessage(data.message);
+        } else if (
+          data.message === "You have successfully joined this live game!"
+        ) {
           dispatch({
             type: "RELOADHOMEPAGE",
             payload: true,
           });
-          updateHomePage();
         }
+
         setLoadingJoin(false);
         setHidePayBtn(true);
+        setMessage(data.message);
       })
       .catch((err) => {
         console.log(err);

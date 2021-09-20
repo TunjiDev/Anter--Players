@@ -1,6 +1,15 @@
 import Nav from "./NavLink";
 import "./styles3.css";
-// import
+// import { Plugins } from "@capacitor/core";
+// const { Contacts } = Plugins;
+import { Contacts } from "@capacitor-community/contacts";
+
+// Contacts.getContacts()
+//   ? Contacts?.getContacts().then((result) => {
+//       console.log(result);
+//       localStorage.setItem("contacts", JSON.stringify(result.contacts));
+//     })
+//   : null;
 
 const Friends = () => {
   return (

@@ -100,14 +100,6 @@ const ChooseUsername = () => {
       .then((data) => {
         setIsLoading(false);
         setImageUpload(data.user.profilePicture);
-        set("userDetails", data.user);
-        dispatch({
-          type: "ADDINFO",
-          payload: {
-            username: data.user.username,
-            profilePicture: data.user.profilePicture,
-          },
-        });
         history.push("/homepage");
       })
       .catch((err) => {

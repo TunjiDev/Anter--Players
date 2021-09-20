@@ -1,66 +1,132 @@
-import { useHistory } from "react-router-dom";
-import axios from "axios";
-import { useContext, useState } from "react";
-import { IonSpinner } from "@ionic/react";
-import { Store, get } from "../context/Store";
+import { useState, useContext } from "react";
+import { GiCoins } from "react-icons/gi";
+import { SearchPlayerModal } from "./RedirectModal";
+import { Store } from "../context/Store";
 import "./style2.css";
 
 const SelectLevel = () => {
-  const { dispatch } = useContext(Store);
-  const [loading, setLoading] = useState(false);
-  // const fetchQuestions=async(e)=>{
-  //     e.preventDefault()
-  //       setLoading(true)
-  //       const token =await get('token')
-  //       const config=   {
-  //           headers:{Authorization:`Bearer ${token}`  }
+  const [searchModal, setSearchModal] = useState(false);
+  const [category, setCategory] = useState("");
+  const [stake, setStake] = useState("");
+  const [error, setError] = useState(false);
+  const { dispatch, state } = useContext(Store);
 
-  //      }
-  //   try{  const {data} = await axios.get('https://anter-trivia-game.herokuapp.com/api/v1/user/questions', config)
-  //      if(data){
-  //          setLoading(false)
-  //         dispatch({type:'GETQUESTIONS', payload:data.data.questions})
-  //         console.log(Object.values(data.data.questions[0].options[0]).slice(1,4))
-  //         // history.push('/question')
-  //      }
+  const startSearch = (e) => {
+    e.preventDefault();
+    setError("");
+    if (!category || !stake) {
+      setError("Please select both category and stake amount");
+      return;
+    } else if (!state.userDetails.coins || state.userDetails.coins < category) {
+      setError("Insufficient coin balance. Please top up.");
+      return;
+    } else setSearchModal(true);
+  };
 
-  // }
-  //   catch(err){
-  //       console.log(err)
-  //       setLoading(false)
-  //   }
-  // }
-
-  const history = useHistory();
   return (
     <div className="questions" style={{ color: "white" }}>
-      <form action="" className="questions__select">
+      <form action="" className="questions__select" onSubmit={startSearch}>
         <label htmlFor="select">
-          <h3 className="question-spash-header">Select Difficulty Level</h3>
+          <p className="question-spash-header">Select Category</p>
         </label>
         <select
           style={{ backgroundColor: "white" }}
           className="questions__select-difficulty"
           name="select"
           id="select"
+          onChange={(e) => setCategory(e.target.value)}
         >
-          <option value="Easy" className="levels">
-            Easy
+          <option value="Animes" className="levels">
+            Animes
           </option>
-          <option value="Normal" className="levels">
-            Normal
+          <option value="Football" className="levels">
+            Football
           </option>
-          <option value="Hard" className="levels">
-            Hard
+          <option value="Music" className="levels">
+            Music
           </option>
         </select>
-        <button
-          className="btn select-btn"
-          onClick={() => history.push("/question")}
-        >
-          {loading ? <IonSpinner name="bubbles" /> : <p>Continue</p>}
+        <p>Stake with:</p>
+        <div className="stake_div">
+          <button
+            type="button"
+            className="each__stake"
+            onClick={() => setStake(100)}
+          >
+            <p>
+              100
+              <GiCoins className="stake__coins" />
+            </p>
+            <span className="stake__span">Win 1000 Naira</span>
+          </button>
+          <button
+            type="button"
+            className="each__stake"
+            onClick={() => setStake(300)}
+          >
+            <p>
+              300
+              <GiCoins className="stake__coins" />
+            </p>
+            <span className="stake__span">Win 3200 Naira</span>
+          </button>
+          <button
+            type="button"
+            className="each__stake"
+            onClick={() => setStake(500)}
+          >
+            <p>
+              500
+              <GiCoins className="stake__coins" />
+            </p>
+            <span className="stake__span">Win 5,500 Naira</span>
+          </button>
+          <button
+            type="button"
+            className="each__stake"
+            onClick={() => setStake(1000)}
+          >
+            <p>
+              1000
+              <GiCoins className="stake__coins" />
+            </p>
+            <span className="stake__span">Win 10,000 Naira</span>
+          </button>
+          <button
+            type="button"
+            className="each__stake"
+            onClick={() => setStake(2000)}
+          >
+            <p>
+              2000
+              <GiCoins className="stake__coins" />
+            </p>
+            <span className="stake__span">Win 22,500 Naira</span>
+          </button>
+          <button
+            type="button"
+            className="each__stake"
+            onClick={() => setStake(5000)}
+          >
+            <p>
+              5000
+              <GiCoins className="stake__coins" />
+            </p>
+            <span className="stake__span">Win 50,000 Naira</span>
+          </button>
+        </div>
+        {error && <p className="error__span redText">{error}</p>}
+        <button className="btn select-btn">
+          <p>Continue</p>
         </button>
       </form>
+      {searchModal && (
+        <SearchPlayerModal
+          category={category}
+          stake={stake}
+          close={() => setSearchModal(false)}
+        />
+      )}
     </div>
   );
 };

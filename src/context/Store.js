@@ -125,16 +125,14 @@ export function StoreProvider(props) {
     const token = localStorage.getItem("token")
       ? JSON.parse(localStorage.getItem("token"))
       : null;
-    fetch(
-      ` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone/${id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+        body: JSON.stringify({ gameId: id }),
+      },
+    })
       .then((res) => res.json())
       .then((data) => {
         console.log(data, "from gamezone endpoint");

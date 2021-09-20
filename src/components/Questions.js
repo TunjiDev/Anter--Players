@@ -4,6 +4,8 @@ import {
   faTimesCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { faCircle as faCircleRegular } from "@fortawesome/free-regular-svg-icons";
+// import CircularProgressWithLabel from "@mui/material/CircularProgress";
+import { CircularProgress } from "@material-ui/core";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useSound from "use-sound";
 import right from "../Sounds/right.wav";
@@ -16,33 +18,39 @@ import { GiCoins } from "react-icons/gi";
 import Powerups, { LostLife } from "./Powerups";
 import Countdown from "./Countdown";
 const TIMER_START_VALUE = 10;
+const GAME_API = "https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone";
 
-const Question = () => {
+const Question = ({ firstQuestion, auth }) => {
   const history = useHistory();
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const { state } = useContext(Store);
+  const { token, identifier } = auth;
+
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
   const [revealAnswers, setRevealAnswers] = useState(false);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(TIMER_START_VALUE);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [hideOption, setHideOption] = useState(false);
-  const [newOptions, setNewOptions] = useState();
-  const [low, setLow] = useState(false);
-  const [toUseEraser, setToUseEraser] = useState(false);
+
   const [flash, setFlash] = useState(false);
   const [success] = useSound(right);
   const [fail] = useSound(wrong);
   const [attention] = useSound(timerAttention);
-  const { state } = useContext(Store);
 
-  const [apiQuestions, setApiQuestions] = useState([state.Questions]);
+  const [wrongAnswer, setWrongAnswer] = useState(false);
+  const [correctAnswer, setCorrectAnswer] = useState(false);
   const [indexx, setIndex] = useState();
-  const [lives, setLives] = useState(3);
-  const [clickedBtn, setClickedBtn] = useState(false);
+  const [lives, setLives] = useState(
+    state.userDetails.extraLives >= 3 ? 3 : state.userDetails.extraLives
+  );
   const [gameOver, setGameOver] = useState(false);
   const [startGame, setStartGame] = useState(false);
   const [gameModal, setGameModal] = useState(false);
-  const [questions, setQuestions] = useState(state.Questions);
-  const [erasedOptions, setErasedOptions] = useState([]);
+  const [question, setQuestion] = useState(firstQuestion);
+  const { optionA, optionB, optionC } = question.options[0];
+
+  const answerOptions = [optionA, optionB, optionC];
+  const [low, setLow] = useState(false);
   let t1;
   let t2;
 
@@ -62,6 +70,13 @@ const Question = () => {
       clearInterval(t2);
     };
   }, [timer]);
+
+  const updateTimer = () => {
+    if (!revealAnswers && timer > 0) {
+      t1 = setTimeout(() => setTimer(timer - 1), 1000);
+    }
+  };
+
   const warning = () => {
     t2 = setInterval(() => attention(), 1000);
   };
@@ -70,31 +85,39 @@ const Question = () => {
     setTimeout(() => updateTimer(), 1000);
   };
 
-  const currentQuestion = questions[currentQuestionIndex];
-
-  const updateTimer = () => {
-    if (!revealAnswers && timer > 0) {
-      t1 = setTimeout(() => setTimer(timer - 1), 1000);
-    }
-  };
-
   const handleNextQuestionClick = () => {
     clearInterval(t2);
     clearTimeout(t1);
-    setRevealAnswers(false);
-    setToUseEraser(true);
-    setGameModal(false);
-    setLow(false);
-    setHideOption(false);
-    setIndex(null);
-    setTimer(TIMER_START_VALUE);
-    setFlash(false);
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    } else {
-      setGameOver(true);
-      clearTimeout(t1);
-    }
+    setCurrentQuestionIndex((prev) => prev + 1);
+    setCorrectAnswer(false);
+    setWrongAnswer(false);
+
+    fetch(GAME_API, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        gameId: identifier,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "from nextQuestion");
+        const questionObj = {
+          question: data.question,
+          options: data.options,
+        };
+        setQuestion(questionObj);
+        setRevealAnswers(false);
+        setLow(false);
+        setHideOption(false);
+        setIndex(null);
+        setTimer(TIMER_START_VALUE);
+        setFlash(false);
+      })
+      .catch((err) => console.log(err));
   };
 
   const resetQuiz = () => {
@@ -102,24 +125,16 @@ const Question = () => {
     setGameOver(false);
     setRevealAnswers(false);
     setCurrentQuestionIndex(0);
-    setToUseEraser(true);
+    setFlash(false);
     setScore(0);
     setLives(3);
   };
   const failHandler = () => {
+    clearInterval(t2);
     clearTimeout(t1);
-
-    if (lives > 1) {
-      setLives((prev) => prev - 1);
-      setGameModal(true);
-      setTimeout(() => {
-        setGameModal(false);
-        setTimer(TIMER_START_VALUE);
-        handleNextQuestionClick();
-      }, 1500);
-    }
+    setGameModal(true);
+    setLives((prev) => prev - 1);
     if (lives === 1) {
-      setGameModal(true);
       setTimeout(() => {
         setGameModal(false);
         setGameOver(true);
@@ -130,41 +145,100 @@ const Question = () => {
   };
 
   const handleAnswerClick = (selectedAnswer) => {
+    console.log(selectedAnswer, "selected");
     clearTimeout(t1);
     clearInterval(t2);
-    setFlash(true);
     setSelectedAnswer(selectedAnswer);
+    setFlash(true);
     if (selectedAnswer === "") return;
-    if (selectedAnswer === currentQuestion.answer) {
-      success();
-      setRevealAnswers(true);
-      setScore(score + 1);
-    } else {
-      fail();
-      setRevealAnswers(false);
-      failHandler();
-    }
 
-    setTimeout(() => {
-      handleNextQuestionClick();
-    }, 1500);
+    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        gameId: identifier,
+        answer: selectedAnswer,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "from answer click");
+
+        if (data.message === "Correct!") {
+          success();
+          setCorrectAnswer(true);
+          setRevealAnswers(true);
+          setScore(score + 1);
+          handleNextQuestionClick();
+        } else {
+          fail();
+          setWrongAnswer(true);
+          setRevealAnswers(false);
+          failHandler();
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
+  const action = (action) => {
+    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        gameId: identifier,
+        action: action,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data, "from eraser click");
+        setGameModal(false);
+        const questionObj = {
+          question: data.question,
+          options: data.options,
+        };
+        setQuestion(questionObj);
+        setRevealAnswers(false);
+        setWrongAnswer(false);
+        setCorrectAnswer(false);
+        setLow(false);
+        setHideOption(false);
+        setIndex(null);
+        setTimer(TIMER_START_VALUE);
+        setFlash(false);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  const giveUp = () => {
+    setGameOver(true);
+    setGameModal(false);
+  };
   const useEraser = () => {
     setHideOption(true);
+    action("eraser");
+    // console.log(question.answerOptions, "options");
+    // const filtered = question.answerOptions.filter(
+    //   (q) => q !== question.answer
+    // );
+    // setErasedOptions(filtered);
+    // const shuffled = shuffle(filtered);
+    // const selected = shuffled[Math.floor(Math.random() * 3)];
+    // const wrongAnswer = question.answerOptions.findIndex(
+    //   (option) => option === selected
+    // );
 
-    const filtered = currentQuestion.answerOptions.filter(
-      (q) => q !== currentQuestion.answer
-    );
-    setErasedOptions(filtered);
-    const shuffled = shuffle(filtered);
-    const selected = shuffled[Math.floor(Math.random() * 3)];
-    const wrongAnswer = currentQuestion.answerOptions.findIndex(
-      (option) => option === selected
-    );
-    setIndex(wrongAnswer);
+    // setIndex(wrongAnswer);
   };
-
   if (!startGame) return <Countdown startGame={startMainGame} />;
   else
     return (
@@ -179,6 +253,12 @@ const Question = () => {
             <div className="questions__QandA">
               <div className="questions__timer">
                 <span className="timer">{timer}</span>
+                {/* <CircularProgress
+                  className="timer"
+                  variant="determinate"
+                  value={(timer / TIMER_START_VALUE) * 100}
+                  // value={timer}
+                /> */}
               </div>
               <div className="timer-wrapper">
                 <div
@@ -189,25 +269,23 @@ const Question = () => {
                 ></div>
               </div>
               <div className="question-count">
-                <span>Question {currentQuestionIndex + 1}</span>/
-                {questions.length}
+                <span>Question {currentQuestionIndex}</span>
               </div>
-              <div className="questions__display">
-                {currentQuestion.questionText}?
-              </div>
+              <div className="questions__display">{question.question}?</div>
 
               <div>
-                {currentQuestion.answerOptions.map((answerOption, index) => (
+                {answerOptions.map((answerOption, index) => (
                   <div key={index} className="answer-item">
                     <AnswerButton
                       answerOption={answerOption}
-                      isCorrectAnswer={answerOption === currentQuestion.answer}
+                      correctAnswer={correctAnswer}
                       isSelectedAnswer={answerOption === selectedAnswer}
                       revealAnswers={revealAnswers}
                       handleAnswerClick={handleAnswerClick}
-                      index={index}
-                      indexx={indexx}
+                      // index={index}
+                      // indexx={indexx}
                       flash={flash}
+                      wrongAnswer={wrongAnswer}
                     />
                   </div>
                 ))}
@@ -252,7 +330,7 @@ const Question = () => {
                   </span>
                   <span>
                     <span className="number-of-incorrect">
-                      {questions.length - score}
+                      {question.length - score}
                     </span>
                     Incorrect
                   </span>
@@ -287,7 +365,11 @@ const Question = () => {
           </div>
         )}
         {gameModal && (
-          <LostLife close={() => setGameModal(false)} lives={lives} />
+          <LostLife
+            close={giveUp}
+            lives={lives}
+            action={() => action("extralife")}
+          />
         )}
       </div>
     );
@@ -296,24 +378,25 @@ const Question = () => {
 /******* ANSWER BUTTON COMPONENT ********/
 const AnswerButton = ({
   answerOption,
-  isCorrectAnswer,
+  correctAnswer,
   isSelectedAnswer,
   revealAnswers,
   index,
   indexx,
   handleAnswerClick,
   flash,
+  wrongAnswer,
 }) => {
-  let backgroundColor;
-  let icon;
+  let backgroundColor, icon;
 
-  if (revealAnswers && isCorrectAnswer) {
+  if (isSelectedAnswer) {
+    backgroundColor = "#3b076b";
+    icon = faTimesCircle;
+  }
+  if (correctAnswer && isSelectedAnswer) {
     backgroundColor = "#2f922f";
     icon = faCheckCircle;
-  } else if (!revealAnswers && isSelectedAnswer) {
-    backgroundColor = "#ff3333";
-    icon = faTimesCircle;
-  } else if (revealAnswers && isSelectedAnswer) {
+  } else if (wrongAnswer && isSelectedAnswer) {
     backgroundColor = "#ff3333";
     icon = faTimesCircle;
   } else {
@@ -324,13 +407,15 @@ const AnswerButton = ({
     <div
       className={`questions__options  ${isSelectedAnswer && flash && "flash"}`}
       style={{ backgroundColor: backgroundColor, color: "white" }}
-      onClick={() => handleAnswerClick(index === indexx ? "" : answerOption)}
+      onClick={() => handleAnswerClick(answerOption)}
+      // onClick={() => handleAnswerClick(index === indexx ? "" : answerOption)}
     >
       <div className="answer__icon">
         <FontAwesomeIcon className="answer-item-circle" icon={icon} />
       </div>
       <span className="answer__option">
-        {index === indexx ? "" : answerOption}
+        {answerOption}
+        {/* {index === indexx ? "" : answerOption} */}
       </span>
     </div>
   );

@@ -180,11 +180,15 @@ body {
 
 .levels {
   display: inline-block;
-  background-color: #1c0234;
-  color: #ffff;
+  background-color: white;
+  color: black;
   transition: all 0.5s;
   border: none;
   font-size: inherit;
+  cursor: pointer;
+}
+.levels:hover {
+  background-color: #1c0234aa;
 }
 
 .btn {
@@ -485,7 +489,7 @@ body {
 .select-btn {
   display: block;
   margin: 0 auto;
-  margin-top: 5rem;
+  margin-top: 3rem;
   width: 22.3rem;
 }
 @media screen and (max-width: 25px) {
@@ -500,14 +504,31 @@ body {
   right: 6%;
   margin-top: 2rem;
   font-size: 2rem;
-  font-weight: 400;
 }
-
+/* .timer {
+  -moz-transform: scale(-1, 1);
+  -webkit-transform: scale(-1, 1);
+  -o-transform: scale(-1, 1);
+  -ms-transform: scale(-1, 1);
+  transform: scale(-1, 1);
+} */
 .startGame {
   width: 100%;
 }
 .shortbtn {
-  width: 50%;
+  width: 80%;
+  font-weight: lighter;
+}
+.spacing {
+  margin-top: 10px;
+}
+.centralize {
+  display: flex;
+  height: 100vh;
+  justify-content: center;
+  align-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .navigation {
@@ -527,7 +548,7 @@ body {
 .nav {
   height: 100%;
   padding: 1.5rem;
-  width: 80%;
+  width: 100%;
   color: #7c7c7c;
   display: flex;
   align-items: center;
@@ -1209,7 +1230,15 @@ body {
 }
 
 .questions {
-  width: 100%;
+  width: 100vw;
+  height: 100vh;
+  align-content: center;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  justify-content: center;
 }
 .questions__splash {
   width: 26.3rem;
@@ -1238,10 +1267,6 @@ body {
   transform: translate(-50%, -50%);
 }
 .questions__select {
-  position: absolute;
-  top: 30%;
-  left: 50%;
-  transform: translateX(-50%);
   text-align: center;
 }
 .questions__select-difficulty {
@@ -1257,6 +1282,13 @@ body {
   border-radius: 0.2rem;
 }
 
+.today__span {
+  font-size: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: blue;
+}
 .questions__container > * {
   display: block;
 }
@@ -1296,6 +1328,7 @@ body {
   width: 10%;
   position: absolute;
   left: 20px;
+  font-size: 30px;
 }
 .powerups__eraserDiv {
   display: flex;
@@ -1466,7 +1499,7 @@ body {
 .nav {
   height: 100%;
   padding: 1.5rem;
-  width: 80%;
+  width: 100%;
   color: #7c7c7c;
   display: flex;
   align-items: center;
@@ -1522,7 +1555,7 @@ body {
   background-color: #8a2be2;
   color: white;
   padding: 10px 20px;
-  height: 100px;
+  height: auto;
   min-width: 300px;
   position: fixed;
   transform: translate(-50%, -50%);
@@ -1531,7 +1564,6 @@ body {
   z-index: 9999;
   box-shadow: 0 12px 15px 0 rgb(0 0 0 / 25%);
   animation: sliding 1s;
-  border-radius: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -1572,32 +1604,36 @@ body {
 .yellow__coins {
   color: yellow;
 }
-.countdown__overlay {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
+
+.countdown__div {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   align-content: center;
   color: white;
-  background-color: #8a2be2;
-
-  font-size: 300px;
+  height: 100vh;
+  width: 100vw;
+}
+.countdown__overlay {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 0;
+  bottom: 0;
+  background-color: black;
+  opacity: 0.5;
 }
 .ready__h1 {
   position: absolute;
-  top: 150px;
+  top: 70px;
 }
 .seconds__animation {
   animation: enlarge 1s infinite;
   font-size: 50px;
   color: white;
   z-index: 9999;
-  opacity: 1;
+  opacity: 1 !important;
 }
 
 @keyframes enlarge {
@@ -1621,6 +1657,7 @@ body {
   display: block;
   margin-top: 100px;
   z-index: 999999999;
+  opacity: 1 !important;
 }
 .wifi__container {
   width: 50%;
@@ -1643,29 +1680,117 @@ body {
   border-color: transparent;
   border-top: 60px solid white;
 }
-.wifi__border2 {
-  width: 120px;
-  height: 120px;
-  border-radius: 50%;
-  border-color: transparent;
-  border-top: 60px solid white;
+
+.error__span {
+  margin-top: 20px;
 }
 
-.wifi__border3 {
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  border-color: transparent;
-  border-top: 60px solid white;
+.newWifi {
+  color: black;
+  height: 30px;
+  width: 30px;
+  margin-right: 10px;
+  animation: glow 2s infinite;
 }
-.game_mode_div {
+@keyframes glow {
+  from {
+    opacity: 0.5;
+  }
+  to {
+    opacity: 1;
+    color: #8a2be2;
+  }
+}
+.stake_div {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+.each__stake {
+  width: 80px;
+  height: 80px;
+  margin: 0 2px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: rgb(226, 224, 224);
+  color: black;
+  cursor: pointer;
+  transition: 0.2s ease-in-out !important;
+  box-shadow: 0 12px 15px 0 rgb(0 0 0 / 25%);
+  border: none;
+  outline: none;
+  font-weight: 600;
+  border-radius: 0.6rem;
+  font-family: "Inter";
+  transition: 0.2s ease-in-out !important;
+}
+
+.each__stake:focus {
+  outline: 2px solid #1c0234;
+  outline-offset: 3px;
+}
+.stake__coins {
+  color: rgb(255, 153, 0);
+  margin-left: 3px;
+}
+.stake__span {
+  margin-top: 20px;
+  font-size: 10px;
+  text-align: center;
+}
+.money__stack {
+  color: green;
+  flex-direction: column;
+  display: inline-flex;
+}
+.question-spash-header {
+  /* margin-top: 50px; */
+  font-size: 20px;
+}
+.redText {
+  color: red;
+}
+.searchPlayer__modal {
+  background-color: white;
+  color: black;
+  padding: 10px 20px;
+  height: auto;
+  min-width: 80%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  z-index: 9999999999999999;
+  box-shadow: 0 12px 15px 0 rgb(0 0 0 / 25%);
+
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-content: center;
   align-items: center;
-  height: 100vh;
+  align-content: center;
+  font-weight: bold;
 }
-.error__span {
-  margin-top: 20px;
+.wifi__search {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  align-items: center;
+}
+@media screen and (min-width: 300px) {
+  .stake_div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}
+@media screen and (min-width: 375px) {
+  .splash-screen__btn {
+    /* bottom: 165px; */
+  }
 }

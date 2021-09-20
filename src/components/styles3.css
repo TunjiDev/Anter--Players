@@ -1,0 +1,160 @@
+.vsfriend__title {
+  font-size: 1.5rem;
+  margin-top: 2rem;
+}
+
+.vsfriend__add {
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.vsfriend__add-search,
+.vsfriend__add-phonebook {
+  border: 1.5px solid #ffff;
+  color: #ffff;
+  outline: none;
+  background-color: transparent;
+  font-size: 1.5rem;
+  border-radius: 0.6rem;
+  font-family: "Inter";
+  transition: 0.2s ease-in-out !important;
+  padding: 1.3rem;
+}
+
+.vsfriend__title-list {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.5);
+  padding: 2rem;
+}
+.vsfriend__title-list--name {
+  margin-left: 7rem;
+  font-size: 1.3rem;
+}
+.vsfriend__title-list--playLast {
+  margin-right: 10rem;
+  font-size: 1.3rem;
+}
+
+.vsfriend__friends {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(230, 230, 230, 0.2);
+  border-bottom: 1px solid rgba(230, 230, 230, 0.2);
+  padding: 1.5rem;
+  font-size: 1.5rem;
+}
+.vsfriend__friends-image {
+  width: 4rem;
+  height: 4rem;
+}
+.vsfriend__friends-image--pix {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+}
+.vsfriend__friends-name {
+  letter-spacing: 0.09rem;
+}
+.vsfriend__friends-playLast {
+  color: rgba(255, 255, 255, 0.36);
+}
+.vsfriend__friends-play {
+  outline: none;
+  border: none;
+  background-color: transparent;
+  width: 6.7rem;
+  height: 2.9rem;
+  color: #fc8c8c;
+  background: rgba(196, 196, 196, 0.33);
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+  border-radius: 0.6rem;
+}
+
+.phonebook-active,
+.search-active {
+  background-color: #460088;
+}
+
+.vsfriend__searchBar {
+  margin-top: 5rem;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  background-color: #ffff;
+  justify-content: space-between;
+  padding: 0 0.6rem;
+  border-radius: 0.6rem;
+  /* clears the ‘X’ from Chrome */
+}
+.vsfriend__searchBar-img {
+  width: 2.4rem;
+  height: 2.4rem;
+}
+.vsfriend__searchBar-img img {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
+  color: rgba(255, 255, 255, 0.5);
+}
+.vsfriend__searchBar input {
+  display: block;
+  border: none;
+  outline: none;
+  padding: 1.5rem 1rem;
+  font-size: 1.7rem;
+}
+.vsfriend__searchBar input[type="search"]::-ms-clear {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.vsfriend__searchBar input[type="search"]::-ms-reveal {
+  display: none;
+  width: 0;
+  height: 0;
+}
+.vsfriend__searchBar input[type="search"]::-webkit-search-decoration,
+.vsfriend__searchBar input[type="search"]::-webkit-search-cancel-button,
+.vsfriend__searchBar input[type="search"]::-webkit-search-results-button,
+.vsfriend__searchBar input[type="search"]::-webkit-search-results-decoration {
+  display: none;
+}
+.vsfriend__searchBar-close {
+  font-size: 4rem;
+}
+.vsfriend__searchBar-close a {
+  text-decoration: none;
+  color: #ccc;
+}
+
+.phone-book__heading {
+  margin-top: 5rem;
+  margin-bottom: 3rem;
+  font-size: 1.8rem;
+  font-weight: bold;
+  letter-spacing: 0.06rem;
+}
+
+.phone-book__name {
+  margin-left: -12rem;
+}
+
+.phone-book .invite {
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+.white__h1 {
+  color: white;
+  margin-left: 10px;
+}
+.rules__container {
+  color: gray;
+}

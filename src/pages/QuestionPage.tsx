@@ -6,9 +6,7 @@ import "./Home.css";
 const QuestionPage: React.FC = () => {
   return (
     <IonPage>
-      <IonContent>
-      <Questions/>
-      </IonContent>
+      <IonContent>{/* <Questions firstQuestion/> */}</IonContent>
     </IonPage>
   );
 };

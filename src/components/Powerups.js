@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { ImHeart } from "react-icons/im";
 import { TiCancel } from "react-icons/ti";
 import eraser from "../img/eraser.svg";
@@ -9,7 +9,7 @@ import "./style2.css";
 
 const Powerups = ({ lives, handleHide, hideOption }) => {
   const useEraser = () => {
-    !hideOption && handleHide()
+    !hideOption && handleHide();
   };
   return (
     <div className="powerups__container">
@@ -32,12 +32,23 @@ const Powerups = ({ lives, handleHide, hideOption }) => {
 
 export default Powerups;
 
-export const LostLife = ({ close }) => {
+export const LostLife = ({ close, lives, action }) => {
   return (
     <>
-      <div className="overlay" onClick={close}></div>
+      <div className="overlay"></div>
 
-      <div className="life__modal">Failed. You've lost a life.</div>
+      <div className="life__modal">
+        <p style={{ marginBottom: "20px", fontSize: "15px" }}>
+          Failed! Don't give up yet!
+        </p>
+        <button onClick={action} className="btn shortbtn">
+          Use 1
+          <ImHeart style={{ background: "#1c0234aa", color: "red" }} />
+        </button>
+        <button className="btn shortbtn spacing" onClick={close}>
+          I give up!
+        </button>
+      </div>
     </>
   );
 };

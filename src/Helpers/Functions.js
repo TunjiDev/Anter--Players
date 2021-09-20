@@ -12,6 +12,18 @@ export const months = [
   "november",
   "december",
 ];
+export const timeFormat = (str) => {
+  const date = new Date(str);
+  let hours = date.getHours();
+  let minutes = date.getMinutes();
+  minutes = minutes < 10 ? "0" + minutes : minutes;
+  let ampm = hours > 12 ? "pm" : "am";
+
+  hours = hours % 12;
+  hours = hours ? hours : 12;
+  const timestamp = hours + ":" + minutes + ampm;
+  return timestamp;
+};
 export const convertTime = (timeGotten) => {
   const apiTime = new Date(+timeGotten).toString();
   const month = apiTime.slice(4, 7);
@@ -49,33 +61,6 @@ export const dateFormat = (string) => {
   //   newDate.getFullYear();
   return returnedDate;
 };
-export const timeFormat = (str) => {
-  const date = new Date(str);
-  let hours = date.getHours();
-  let minutes = date.getMinutes();
-  minutes = minutes < 10 ? "0" + minutes : minutes;
-
-  if (hours === 0) {
-    const timestamp = `11:${minutes}pm`;
-    return timestamp;
-  }
-  if (hours === 1) {
-    const timestamp = `12:${minutes}am`;
-    return timestamp;
-  } else {
-    let ampm = hours > 12 ? "pm" : "am";
-    hours = hours - 1;
-    const timestamp = `${hours % 12 === 0 ? 12 : hours % 12}:${minutes}${ampm}`;
-    return timestamp;
-  }
-
-  // let hoursChange = hours === 0 ? (hours % 12) - 1 : 12;
-  //
-  // hours = hours % 12;
-  // hours = hours ? hours : 12;
-  // const timestamp = hoursChange + ":" + minutes + ampm;
-  // return timestamp;
-};
 
 export const differenceInDates = (string) => {
   const newDate = new Date(new Date(new Date()).toLocaleDateString());
@@ -84,7 +69,7 @@ export const differenceInDates = (string) => {
     new Date(new Date(string).toISOString()).toLocaleDateString()
   );
 
-  const diffTime = Math.abs(newDate - nextDate);
+  const diffTime = nextDate - newDate;
   const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   return diffDays;
 };
@@ -148,19 +133,21 @@ export const checkarr = (arrAll, arrSub) => {
 // Shuffle array
 
 export const shuffle = (array) => {
-  let currentIndex = array.length,  randomIndex;
+  let currentIndex = array.length,
+    randomIndex;
 
   // While there remain elements to shuffle...
   while (currentIndex !== 0) {
-
     // Pick a remaining element...
     randomIndex = Math.floor(Math.random() * currentIndex);
     currentIndex--;
 
     // And swap it with the current element.
     [array[currentIndex], array[randomIndex]] = [
-      array[randomIndex], array[currentIndex]];
+      array[randomIndex],
+      array[currentIndex],
+    ];
   }
 
   return array;
-}
+};

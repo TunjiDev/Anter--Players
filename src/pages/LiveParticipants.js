@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react"
+import React, { useEffect, useState, useContext } from "react";
 import { FcAlarmClock } from "react-icons/fc";
 import { Store, get } from "../context/Store";
 import "./MyStyles.css";
@@ -6,9 +6,8 @@ import { Rules } from "../Helpers/DummyData";
 import FalseTime from "../components/LiveComponents/FalseTime";
 import GameMode from "../components/LiveComponents/GameMode";
 
-
 const LiveParticipants = () => {
-  const { state, dispatch } = useContext(Store)
+  const { state } = useContext(Store);
   const countdownTime = state.isTime[1]?.gameTime
     ? state.isTime[1]?.gameTime
     : state.currentLiveGame.gameTime;
@@ -18,9 +17,6 @@ const LiveParticipants = () => {
 
   useEffect(() => {
     differenceInTimes <= 0 && setGameMode(true);
-    return () => {
-      dispatch({ type: "ADDCURRENTLIVEGAME", payload: [] });
-    };
   }, []);
 
   return (
