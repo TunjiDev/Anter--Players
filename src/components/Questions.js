@@ -39,6 +39,7 @@ const Question = ({ firstQuestion, auth }) => {
 
   const [wrongAnswer, setWrongAnswer] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState(false);
+  const [gameOverMessage, setGameOverMessage] = useState("");
   const [indexx, setIndex] = useState();
   const [lives, setLives] = useState(
     state.userDetails.extraLives >= 3 ? 3 : state.userDetails.extraLives
@@ -47,7 +48,9 @@ const Question = ({ firstQuestion, auth }) => {
   const [startGame, setStartGame] = useState(false);
   const [gameModal, setGameModal] = useState(false);
   const [question, setQuestion] = useState(firstQuestion);
-  const { optionA, optionB, optionC } = question.options[0];
+  const { optionA, optionB, optionC } = question.options[0]
+    ? question.options[0]
+    : {};
 
   const answerOptions = [optionA, optionB, optionC];
   const [low, setLow] = useState(false);
@@ -109,29 +112,26 @@ const Question = ({ firstQuestion, auth }) => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data, "from nextQuestion");
-        const questionObj = {
-          question: data.question,
-          options: data.options,
-        };
-        setQuestion(questionObj);
-        setLow(false);
-        setHideOption(false);
-        setIndex(null);
-        setTimer(TIMER_START_VALUE);
-        setFlash(false);
+        if (data.message === "Congrats! You have won ₦10000 naira!") {
+          gameOver(true);
+          setGameOverMessage(data.message);
+        } else {
+          const questionObj = {
+            question: data.question,
+            options: data.options,
+          };
+          setQuestion(questionObj);
+
+          setLow(false);
+          setHideOption(false);
+          setIndex(null);
+          setTimer(TIMER_START_VALUE);
+          setFlash(false);
+        }
       })
       .catch((err) => console.log(err));
   };
 
-  const resetQuiz = () => {
-    setTimer(TIMER_START_VALUE);
-    setGameOver(false);
-    setRevealAnswers(false);
-    setCurrentQuestionIndex(0);
-    setFlash(false);
-    setScore(0);
-    setLives(3);
-  };
   const failHandler = () => {
     clearInterval(t2);
     clearTimeout(t1);
@@ -172,10 +172,11 @@ const Question = ({ firstQuestion, auth }) => {
         console.log(data, "from answer click");
 
         if (data.message === "Correct!") {
+          setCorrectAnswer(true);
           success();
           setScore(score + 1);
-          setCorrectAnswer(true);
-          const currentSeconds = ( +data.timer - new Date().getTime()) / 1000;
+          const currentSeconds = (+data.timer - new Date().getTime()) / 1000;
+          console.log(currentSeconds, "cur seconds");
           setSecondsRemaining(currentSeconds);
         } else if (data.message === "Wrong!") {
           clearInterval(t3);
@@ -183,8 +184,7 @@ const Question = ({ firstQuestion, auth }) => {
           setWrongAnswer(true);
           failHandler();
         } else {
-          clearInterval(t3);
-          console.log("else data");
+          gameOver(true);
         }
       })
       .catch((err) => {
@@ -252,6 +252,10 @@ const Question = ({ firstQuestion, auth }) => {
     // setIndex(wrongAnswer);
   };
   if (!startGame) return <Countdown startGame={startMainGame} />;
+  if (secondsRemaining)
+    return (
+      <Waiting time={secondsRemaining} request={handleNextQuestionClick} />
+    );
   else
     return (
       <div className="questions__container" style={{ color: "white" }}>
@@ -316,11 +320,7 @@ const Question = ({ firstQuestion, auth }) => {
         ) : (
           <div>
             <div className="questions__result">
-              <h3 className="question-splash-header">
-                {lives === 0
-                  ? "Oops! You've lost all lives"
-                  : "Congratulations!!"}
-              </h3>
+              <h3 className="question-splash-header">{gameOverMessage}</h3>
               <div className="questions__result--scores">
                 <div className="scores">
                   <span>
@@ -362,10 +362,6 @@ const Question = ({ firstQuestion, auth }) => {
                 </div>
               </div>
 
-              <button onClick={resetQuiz} className="btn startGame">
-                Play again
-              </button>
-
               <button
                 onClick={() => history.push("/homepage")}
                 className="btn startGame"
@@ -382,9 +378,6 @@ const Question = ({ firstQuestion, auth }) => {
             lives={lives}
             action={() => action("extralife")}
           />
-        )}
-        {secondsRemaining && (
-          <Waiting time={secondsRemaining} request={handleNextQuestionClick} />
         )}
       </div>
     );
