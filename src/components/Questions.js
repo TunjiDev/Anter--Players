@@ -175,7 +175,7 @@ const Question = ({ firstQuestion, auth }) => {
           success();
           setScore(score + 1);
           setCorrectAnswer(true);
-          const currentSeconds = (new Date().getTime() - +data.timer) / 1000;
+          const currentSeconds = ( +data.timer - new Date().getTime()) / 1000;
           setSecondsRemaining(currentSeconds);
         } else if (data.message === "Wrong!") {
           clearInterval(t3);
