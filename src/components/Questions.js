@@ -16,6 +16,7 @@ import { Store } from "../context/Store";
 import { shuffle } from "../Helpers/Functions";
 import { GiCoins } from "react-icons/gi";
 import Powerups, { LostLife } from "./Powerups";
+import Waiting from "./Waiting";
 import Countdown from "./Countdown";
 const TIMER_START_VALUE = 10;
 const GAME_API = "https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone";
@@ -24,14 +25,13 @@ const Question = ({ firstQuestion, auth }) => {
   const history = useHistory();
   const { state } = useContext(Store);
   const { token, identifier } = auth;
-
+  const [secondsRemaining, setSecondsRemaining] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(1);
   const [revealAnswers, setRevealAnswers] = useState(false);
   const [score, setScore] = useState(0);
   const [timer, setTimer] = useState(TIMER_START_VALUE);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [hideOption, setHideOption] = useState(false);
-const [presentTime, setPresentTime] = useState()
   const [flash, setFlash] = useState(false);
   const [success] = useSound(right);
   const [fail] = useSound(wrong);
@@ -85,17 +85,7 @@ const [presentTime, setPresentTime] = useState()
     setStartGame(true);
     setTimeout(() => updateTimer(), 1000);
   };
-  const checkTime = (time) => {
-    console.log(timer)
-    clearInterval(t3);
-    t3 = setInterval(() => {
-      console.log("isCalling")
-      const nextTimer = new Date(time);
-      if (presentTime === nextTimer) {
-        handleNextQuestionClick();
-      }
-    }, 1000);
-  };
+
   const handleNextQuestionClick = () => {
     clearInterval(t2);
     clearTimeout(t1);
@@ -103,7 +93,8 @@ const [presentTime, setPresentTime] = useState()
     setCurrentQuestionIndex((prev) => prev + 1);
     setCorrectAnswer(false);
     setWrongAnswer(false);
-    setSelectedAnswer();
+    setSelectedAnswer("");
+    setSecondsRemaining(null);
 
     fetch(GAME_API, {
       method: "POST",
@@ -184,8 +175,8 @@ const [presentTime, setPresentTime] = useState()
           success();
           setScore(score + 1);
           setCorrectAnswer(true);
-          setPresentTime(new Date().getTime())
-          checkTime(+data.timer);
+          const currentSeconds = (new Date().getTime() - +data.timer) / 1000;
+          setSecondsRemaining(currentSeconds);
         } else if (data.message === "Wrong!") {
           clearInterval(t3);
           fail();
@@ -391,6 +382,9 @@ const [presentTime, setPresentTime] = useState()
             lives={lives}
             action={() => action("extralife")}
           />
+        )}
+        {secondsRemaining && (
+          <Waiting time={secondsRemaining} request={handleNextQuestionClick} />
         )}
       </div>
     );
