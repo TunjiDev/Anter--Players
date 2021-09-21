@@ -40,15 +40,11 @@ import SelectLevelPage from "./pages/SelectLevel";
 import LiveParticipants from "./pages/LiveParticipants";
 import { get } from "./context/Store";
 
-// const Friends = React.lazy(() => import("./pages/Friends"));
-// const SelectLevelPage = React.lazy(() => import("./pages/SelectLevel"));
-// const RankingPage = React.lazy(() => import("./pages/Ranking"));
 
 const App: React.FC = () => {
   const token = localStorage.getItem("token");
   const token2 = token !== null ? JSON.parse(token) : "";
 
-  //  eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjYxM…zA5fQ.0vEIKfDWsHxEvxHedvN3W07z02u02q-N9y1WF4u6rZU
   useEffect(() => {
     SplashScreen.hide();
   }, []);
@@ -67,7 +63,7 @@ const App: React.FC = () => {
             <Route exact path="/verifycode">
               <VerifyCode />
             </Route>
-            <Route exact path="/homepage">
+            <Route exact path="/">
               <HomePagee />
             </Route>
             <Route path="/profile">
@@ -94,13 +90,7 @@ const App: React.FC = () => {
             <Route exact path="/chooseusername">
               <ChooseUsername />
             </Route>
-            {/* <Route exact path="/">
-              <Redirect to={token ? "homepage" : "/splashscreen"} />
-            </Route>
-
-            <Route exact path="/">
-              <Redirect to={token ? "homepage" : "/splashscreen"} />
-            </Route> */}
+           
             <Route
               path="/"
               exact
