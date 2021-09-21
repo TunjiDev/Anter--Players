@@ -292,6 +292,9 @@ body {
 .no-bg-btn:focus {
   border: none;
 }
+.white{
+  color: white
+}
 
 .amountEarnedByTheUser {
   width: 6.7rem;
