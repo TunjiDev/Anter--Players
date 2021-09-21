@@ -31,8 +31,8 @@ const Friends = () => {
             <button className="vsfriend__add-search phonebook-search">
               Search
             </button>
-            <button onClick={getPermissions}>Get permissions</button>
-            <button onClick={getContacts}>Fetch Contacts</button>
+//             <button onClick={getPermissions}>Get permissions</button>
+//             <button onClick={getContacts}>Fetch Contacts</button>
           </div>
 
           <div className="vsfriend__searchBar">
@@ -46,7 +46,7 @@ const Friends = () => {
           </div>
 
           <p className="phone-book__heading">Contact List</p>
-          {contacts.map((c) => (
+         
             <div className="vsfriend__friends">
               <div className="vsfriend__friends-image">
                 <img
@@ -65,7 +65,76 @@ const Friends = () => {
                 <button className="vsfriend__friends-play">Add</button>{" "}
               </a>
             </div>
-          ))}
+<div className="vsfriend__friends">
+            <div className="vsfriend__friends-image">
+              <img
+                src="../img/admin1.jpg"
+                alt="friend-pix"
+                className="vsfriend__friends-image--pix"
+              />
+            </div>
+            <p className="vsfriend__friends-name phone-book__name">Philip</p>
+            <a href="../html/playfree.html">
+              <button className="vsfriend__friends-play">Add</button>{" "}
+            </a>
+          </div>
+
+          <div className="vsfriend__friends">
+            <div className="vsfriend__friends-image">
+              <img
+                src="../img/admin1.jpg"
+                alt="friend-pix"
+                className="vsfriend__friends-image--pix"
+              />
+            </div>
+            <p className="vsfriend__friends-name phone-book__name">Philip</p>
+            <a href="../html/playfree.html">
+              <button className="vsfriend__friends-play">Add</button>{" "}
+            </a>
+          </div>
+
+          <div className="vsfriend__friends">
+            <div className="vsfriend__friends-image">
+              <img
+                src="../img/admin1.jpg"
+                alt="friend-pix"
+                className="vsfriend__friends-image--pix"
+              />
+            </div>
+            <p className="vsfriend__friends-name phone-book__name">Philip</p>
+            <a href="../html/playfree.html">
+              <button className="vsfriend__friends-play">Add</button>{" "}
+            </a>
+          </div>
+
+          <div className="vsfriend__friends">
+            <div className="vsfriend__friends-image">
+              <img
+                src="../img/Vector.svg"
+                alt="friend-pix"
+                className="vsfriend__friends-image--pix"
+              />
+            </div>
+            <p className="vsfriend__friends-name phone-book__name">Cesna</p>
+            <a href="../html/playfree.html">
+              <button className="vsfriend__friends-play invite">invite</button>{" "}
+            </a>
+          </div>
+
+          <div className="vsfriend__friends">
+            <div className="vsfriend__friends-image">
+              <img
+                src="../img/Vector.svg"
+                alt="friend-pix"
+                className="vsfriend__friends-image--pix"
+              />
+            </div>
+            <p className="vsfriend__friends-name phone-book__name">Purity</p>
+            <a href="../html/playfree.html">
+              <button className="vsfriend__friends-play invite">invite</button>{" "}
+            </a>
+          </div>
+         
         </section>
       </div>
 
