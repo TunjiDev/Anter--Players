@@ -31,7 +31,7 @@ const Question = ({ firstQuestion, auth }) => {
   const [timer, setTimer] = useState(TIMER_START_VALUE);
   const [selectedAnswer, setSelectedAnswer] = useState();
   const [hideOption, setHideOption] = useState(false);
-
+const [presentTime, setPresentTime] = useState()
   const [flash, setFlash] = useState(false);
   const [success] = useSound(right);
   const [fail] = useSound(wrong);
@@ -73,7 +73,7 @@ const Question = ({ firstQuestion, auth }) => {
   }, [timer]);
 
   const updateTimer = () => {
-    if (timer > 0 && revealAnswers) {
+    if (timer > 0 && !revealAnswers) {
       t1 = setTimeout(() => setTimer(timer - 1), 1000);
     }
   };
@@ -86,10 +86,12 @@ const Question = ({ firstQuestion, auth }) => {
     setTimeout(() => updateTimer(), 1000);
   };
   const checkTime = (time) => {
+    console.log(timer)
     clearInterval(t3);
     t3 = setInterval(() => {
+      console.log("isCalling")
       const nextTimer = new Date(time);
-      if (new Date().getTime() === nextTimer) {
+      if (presentTime === nextTimer) {
         handleNextQuestionClick();
       }
     }, 1000);
@@ -155,11 +157,11 @@ const Question = ({ firstQuestion, auth }) => {
 
   const handleAnswerClick = (selectedAnswer) => {
     console.log(selectedAnswer, "selected");
+    setSelectedAnswer(selectedAnswer);
     clearTimeout(t1);
     clearInterval(t2);
     clearInterval(t3);
     setRevealAnswers(true);
-    setSelectedAnswer(selectedAnswer);
     setFlash(true);
     if (selectedAnswer === "") return;
 
@@ -180,8 +182,9 @@ const Question = ({ firstQuestion, auth }) => {
 
         if (data.message === "Correct!") {
           success();
-          setCorrectAnswer(true);
           setScore(score + 1);
+          setCorrectAnswer(true);
+          setPresentTime(new Date().getTime())
           checkTime(+data.timer);
         } else if (data.message === "Wrong!") {
           clearInterval(t3);
