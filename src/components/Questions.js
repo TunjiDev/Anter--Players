@@ -156,7 +156,7 @@ const Question = ({ firstQuestion, auth }) => {
     setFlash(true);
     if (selectedAnswer === "") return;
 
-    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
+    fetch(GAME_API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -176,15 +176,15 @@ const Question = ({ firstQuestion, auth }) => {
           success();
           setScore(score + 1);
           const currentSeconds = (+data.timer - new Date().getTime()) / 1000;
-          console.log(currentSeconds, "cur seconds");
+         
           setSecondsRemaining(currentSeconds);
         } else if (data.message === "Wrong!") {
-          clearInterval(t3);
+         
           fail();
           setWrongAnswer(true);
           failHandler();
         } else {
-          gameOver(true);
+          giveUp();
         }
       })
       .catch((err) => {
@@ -193,7 +193,7 @@ const Question = ({ firstQuestion, auth }) => {
   };
 
   const action = (action) => {
-    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
+    fetch(GAME_API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
