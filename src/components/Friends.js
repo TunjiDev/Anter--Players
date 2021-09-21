@@ -56,11 +56,9 @@ const Friends = () => {
                 />
               </div>
               <p className="vsfriend__friends-name phone-book__name">
-                {c.displayName}
+                Philip
               </p>
-              <p className="vsfriend__friends-name phone-book__name">
-                {c.phoneNumbers[0]}
-              </p>
+             
               <a href="../html/playfree.html">
                 <button className="vsfriend__friends-play">Add</button>{" "}
               </a>
