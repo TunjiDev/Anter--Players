@@ -91,6 +91,10 @@ const HomePage = () => {
       payload: false,
     });
     dispatch({ type: "ADDCURRENTLIVEGAME", payload: [] });
+    dispatch({
+      type: "ITSTIME",
+      payload: [],
+    });
     const currentTimer = interval.current;
 
     return () => {
