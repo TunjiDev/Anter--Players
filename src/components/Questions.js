@@ -53,6 +53,7 @@ const Question = ({ firstQuestion, auth }) => {
   const [low, setLow] = useState(false);
   let t1;
   let t2;
+  let t3;
 
   useEffect(() => {
     startGame && startMainGame();
@@ -72,7 +73,7 @@ const Question = ({ firstQuestion, auth }) => {
   }, [timer]);
 
   const updateTimer = () => {
-    if (!revealAnswers && timer > 0) {
+    if (timer > 0 && revealAnswers) {
       t1 = setTimeout(() => setTimer(timer - 1), 1000);
     }
   };
@@ -84,13 +85,23 @@ const Question = ({ firstQuestion, auth }) => {
     setStartGame(true);
     setTimeout(() => updateTimer(), 1000);
   };
-
+  const checkTime = (time) => {
+    clearInterval(t3);
+    t3 = setInterval(() => {
+      const nextTimer = new Date(time);
+      if (new Date().getTime() === nextTimer) {
+        handleNextQuestionClick();
+      }
+    }, 1000);
+  };
   const handleNextQuestionClick = () => {
     clearInterval(t2);
     clearTimeout(t1);
+    setRevealAnswers(false);
     setCurrentQuestionIndex((prev) => prev + 1);
     setCorrectAnswer(false);
     setWrongAnswer(false);
+    setSelectedAnswer();
 
     fetch(GAME_API, {
       method: "POST",
@@ -110,7 +121,6 @@ const Question = ({ firstQuestion, auth }) => {
           options: data.options,
         };
         setQuestion(questionObj);
-        setRevealAnswers(false);
         setLow(false);
         setHideOption(false);
         setIndex(null);
@@ -133,7 +143,6 @@ const Question = ({ firstQuestion, auth }) => {
     clearInterval(t2);
     clearTimeout(t1);
     setGameModal(true);
-    setLives((prev) => prev - 1);
     if (lives === 1) {
       setTimeout(() => {
         setGameModal(false);
@@ -148,6 +157,8 @@ const Question = ({ firstQuestion, auth }) => {
     console.log(selectedAnswer, "selected");
     clearTimeout(t1);
     clearInterval(t2);
+    clearInterval(t3);
+    setRevealAnswers(true);
     setSelectedAnswer(selectedAnswer);
     setFlash(true);
     if (selectedAnswer === "") return;
@@ -160,7 +171,7 @@ const Question = ({ firstQuestion, auth }) => {
       },
       body: JSON.stringify({
         gameId: identifier,
-        answer: selectedAnswer,
+        answer: selectedAnswer.trim(),
       }),
     })
       .then((res) => res.json())
@@ -170,14 +181,16 @@ const Question = ({ firstQuestion, auth }) => {
         if (data.message === "Correct!") {
           success();
           setCorrectAnswer(true);
-          setRevealAnswers(true);
           setScore(score + 1);
-          handleNextQuestionClick();
-        } else {
+          checkTime(+data.timer);
+        } else if (data.message === "Wrong!") {
+          clearInterval(t3);
           fail();
           setWrongAnswer(true);
-          setRevealAnswers(false);
           failHandler();
+        } else {
+          clearInterval(t3);
+          console.log("else data");
         }
       })
       .catch((err) => {
@@ -199,21 +212,26 @@ const Question = ({ firstQuestion, auth }) => {
     })
       .then((res) => res.json())
       .then((data) => {
-        console.log(data, "from eraser click");
-        setGameModal(false);
-        const questionObj = {
-          question: data.question,
-          options: data.options,
-        };
-        setQuestion(questionObj);
-        setRevealAnswers(false);
-        setWrongAnswer(false);
-        setCorrectAnswer(false);
-        setLow(false);
-        setHideOption(false);
-        setIndex(null);
-        setTimer(TIMER_START_VALUE);
-        setFlash(false);
+        console.log(data, `from ${action} click`);
+        if (action === "extralife") {
+          setLives((prev) => prev - 1);
+          setGameModal(false);
+          const questionObj = {
+            question: data.question,
+            options: data.options,
+          };
+          setQuestion(questionObj);
+          setRevealAnswers(false);
+          setWrongAnswer(false);
+          setCorrectAnswer(false);
+          setLow(false);
+          setHideOption(false);
+          setIndex(null);
+          setTimer(TIMER_START_VALUE);
+          setFlash(false);
+        } else {
+          console.log(action);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -388,7 +406,6 @@ const AnswerButton = ({
   wrongAnswer,
 }) => {
   let backgroundColor, icon;
-
   if (isSelectedAnswer) {
     backgroundColor = "#3b076b";
     icon = faTimesCircle;
@@ -396,12 +413,25 @@ const AnswerButton = ({
   if (correctAnswer && isSelectedAnswer) {
     backgroundColor = "#2f922f";
     icon = faCheckCircle;
-  } else if (wrongAnswer && isSelectedAnswer) {
+  }
+  if (wrongAnswer && isSelectedAnswer) {
     backgroundColor = "#ff3333";
     icon = faTimesCircle;
   } else {
     icon = faCircleRegular;
   }
+  // if (isSelectedAnswer) {
+  //   backgroundColor = "#3b076b";
+  //   icon = faTimesCircle;
+  // } else if (correctAnswer && isSelectedAnswer) {
+  //   backgroundColor = "#2f922f";
+  //   icon = faCheckCircle;
+  // } else if (wrongAnswer && isSelectedAnswer) {
+  //   backgroundColor = "#ff3333";
+  //   icon = faTimesCircle;
+  // } else {
+  //   icon = faCircleRegular;
+  // }
 
   return (
     <div

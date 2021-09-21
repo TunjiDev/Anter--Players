@@ -32,10 +32,9 @@ const LivegameList = ({ livegames }) => {
     allActiveGames?.forEach((a) => {
       if (a.categoryId === state.currentLiveGame._id) {
         inIt.push(state.currentLiveGame);
-        setJoin(true);
       }
     });
-    return inIt.length !== 0;
+    setJoin(inIt);
   };
   useEffect(() => {
     checkGame();
@@ -93,7 +92,7 @@ const LivegameList = ({ livegames }) => {
                   joinLiveGame(l);
                 }}
               >
-                {join ? "Already joined" : "Join game"}
+                Join game
               </button>
             </div>
           </div>
