@@ -88,16 +88,21 @@ const Question = ({ firstQuestion, auth }) => {
     setStartGame(true);
     setTimeout(() => updateTimer(), 1000);
   };
-
+  const giveUp = () => {
+    setGameOver(true);
+    setGameModal(false);
+  };
   const handleNextQuestionClick = () => {
     clearInterval(t2);
     clearTimeout(t1);
     setRevealAnswers(false);
-    setCurrentQuestionIndex((prev) => prev + 1);
-    setCorrectAnswer(false);
-    setWrongAnswer(false);
-    setSelectedAnswer("");
-    setSecondsRemaining(null);
+    if (currentQuestionIndex < 10) {
+      setCurrentQuestionIndex((prev) => prev + 1);
+      setCorrectAnswer(false);
+      setWrongAnswer(false);
+      setSelectedAnswer("");
+      setSecondsRemaining(null);
+    }
 
     fetch(GAME_API, {
       method: "POST",
@@ -113,8 +118,9 @@ const Question = ({ firstQuestion, auth }) => {
       .then((data) => {
         console.log(data, "from nextQuestion");
         if (data.message === "Congrats! You have won ₦10000 naira!") {
-          gameOver(true);
+          giveUp();
           setGameOverMessage(data.message);
+          return;
         } else {
           const questionObj = {
             question: data.question,
@@ -156,7 +162,7 @@ const Question = ({ firstQuestion, auth }) => {
     setFlash(true);
     if (selectedAnswer === "") return;
 
-    fetch(GAME_API, {
+    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -171,20 +177,24 @@ const Question = ({ firstQuestion, auth }) => {
       .then((data) => {
         console.log(data, "from answer click");
 
+
         if (data.message === "Correct!") {
           setCorrectAnswer(true);
           success();
           setScore(score + 1);
           const currentSeconds = (+data.timer - new Date().getTime()) / 1000;
-         
-          setSecondsRemaining(currentSeconds);
+const displayAnswer = Math.floor(currentSeconds -  15))
+
+          
+          if (currentQuestionIndex === 10) {
+            handleNextQuestionClick();
+          } else setSecondsRemaining(currentSeconds);
         } else if (data.message === "Wrong!") {
-         
           fail();
           setWrongAnswer(true);
           failHandler();
         } else {
-          giveUp();
+          gameOver(true);
         }
       })
       .catch((err) => {
@@ -193,7 +203,7 @@ const Question = ({ firstQuestion, auth }) => {
   };
 
   const action = (action) => {
-    fetch(GAME_API, {
+    fetch(` https://anter-trivia-game.herokuapp.com/api/v1/user/gamezone`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -207,49 +217,40 @@ const Question = ({ firstQuestion, auth }) => {
       .then((res) => res.json())
       .then((data) => {
         console.log(data, `from ${action} click`);
-        if (action === "extralife") {
-          setLives((prev) => prev - 1);
-          setGameModal(false);
-          const questionObj = {
-            question: data.question,
-            options: data.options,
-          };
-          setQuestion(questionObj);
-          setRevealAnswers(false);
-          setWrongAnswer(false);
-          setCorrectAnswer(false);
-          setLow(false);
-          setHideOption(false);
-          setIndex(null);
-          setTimer(TIMER_START_VALUE);
-          setFlash(false);
-        } else {
-          console.log(action);
-        }
+        const questionObj = {
+          question: data.question,
+          options: data.options,
+          answer: data.answer ? data.answer : "",
+        };
+        return questionObj;
       })
       .catch((err) => {
         console.log(err);
       });
   };
-  const giveUp = () => {
-    setGameOver(true);
-    setGameModal(false);
-  };
-  const useEraser = () => {
-    setHideOption(true);
-    action("eraser");
-    // console.log(question.answerOptions, "options");
-    // const filtered = question.answerOptions.filter(
-    //   (q) => q !== question.answer
-    // );
-    // setErasedOptions(filtered);
-    // const shuffled = shuffle(filtered);
-    // const selected = shuffled[Math.floor(Math.random() * 3)];
-    // const wrongAnswer = question.answerOptions.findIndex(
-    //   (option) => option === selected
-    // );
 
-    // setIndex(wrongAnswer);
+  const useEraser = () => {
+    const questionObj = action("eraser");
+    const rightAnswer = questionObj.answer;
+    setQuestion(questionObj);
+    const wrongAnswer = answerOptions.indexOf(rightAnswer);
+    setIndex(wrongAnswer);
+  };
+
+  const useExtraLife = () => {
+    const questionObj = action("extralife");
+    setLives((prev) => prev - 1);
+    setGameModal(false);
+    setQuestion(questionObj);
+    setSelectedAnswer("");
+    setTimer(TIMER_START_VALUE);
+    setRevealAnswers(false);
+    setWrongAnswer(false);
+    setCorrectAnswer(false);
+    setLow(false);
+    setHideOption(false);
+    setIndex(null);
+    setFlash(false);
   };
   if (!startGame) return <Countdown startGame={startMainGame} />;
   if (secondsRemaining)
@@ -298,8 +299,8 @@ const Question = ({ firstQuestion, auth }) => {
                       isSelectedAnswer={answerOption === selectedAnswer}
                       revealAnswers={revealAnswers}
                       handleAnswerClick={handleAnswerClick}
-                      // index={index}
-                      // indexx={indexx}
+                      index={index}
+                      indexx={indexx}
                       flash={flash}
                       wrongAnswer={wrongAnswer}
                     />
@@ -341,9 +342,7 @@ const Question = ({ firstQuestion, auth }) => {
                     />
                   </span>
                   <span>
-                    <span className="number-of-incorrect">
-                      {question.length - score}
-                    </span>
+                    <span className="number-of-incorrect">{10 - score}</span>
                     Incorrect
                   </span>
                 </div>
@@ -363,7 +362,7 @@ const Question = ({ firstQuestion, auth }) => {
               </div>
 
               <button
-                onClick={() => history.push("/homepage")}
+                onClick={() => history.push("/")}
                 className="btn startGame"
                 style={{ marginTop: "10px" }}
               >
@@ -373,11 +372,7 @@ const Question = ({ firstQuestion, auth }) => {
           </div>
         )}
         {gameModal && (
-          <LostLife
-            close={giveUp}
-            lives={lives}
-            action={() => action("extralife")}
-          />
+          <LostLife close={giveUp} lives={lives} action={useExtraLife} />
         )}
       </div>
     );
@@ -396,15 +391,14 @@ const AnswerButton = ({
   wrongAnswer,
 }) => {
   let backgroundColor, icon;
-  if (isSelectedAnswer) {
+  if (isSelectedAnswer && !wrongAnswer && !correctAnswer) {
     backgroundColor = "#3b076b";
     icon = faTimesCircle;
-  }
-  if (correctAnswer && isSelectedAnswer) {
+  } else if (correctAnswer && isSelectedAnswer) {
     backgroundColor = "#2f922f";
     icon = faCheckCircle;
-  }
-  if (wrongAnswer && isSelectedAnswer) {
+    console.log("correct");
+  } else if (wrongAnswer && isSelectedAnswer) {
     backgroundColor = "#ff3333";
     icon = faTimesCircle;
   } else {
@@ -442,3 +436,4 @@ const AnswerButton = ({
 };
 
 export default Question;
+
