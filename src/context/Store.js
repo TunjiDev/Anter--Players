@@ -159,7 +159,7 @@ export function StoreProvider(props) {
         if (hours === 0 && minutes === 2 && seconds2 === 0) {
           gameZoneEndPoint(activeGame.categoryId);
           clearInterval(interval.current);
-        } else if (hours === 0 && minutes === 0 && seconds2 === 10) {
+        } else if (hours === 0 && minutes === 0 && seconds2 === 20) {
           dispatch({
             type: "ITSTIME",
             payload: [true, activeGame],
