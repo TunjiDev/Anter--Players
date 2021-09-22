@@ -48,6 +48,7 @@ const Question = ({ firstQuestion, auth }) => {
   const [startGame, setStartGame] = useState(false);
   const [gameModal, setGameModal] = useState(false);
   const [question, setQuestion] = useState(firstQuestion);
+  const [displayAnswer, setDisplayAnswer] = useState();
   const { optionA, optionB, optionC } = question.options[0]
     ? question.options[0]
     : {};
@@ -57,6 +58,7 @@ const Question = ({ firstQuestion, auth }) => {
   let t1;
   let t2;
   let t3;
+  let t4;
 
   useEffect(() => {
     startGame && startMainGame();
@@ -152,6 +154,18 @@ const Question = ({ firstQuestion, auth }) => {
     }
   };
 
+    const correctDisplay = (currentSeconds) => {
+      if (Math.floor(currentSeconds - new Date().getTime()) / 1000 <= 5) {
+        setCorrectAnswer(true);
+        success();
+        setScore(score + 1);
+        setTimeout(() => {
+          clearInterval(t4);
+          setSecondsRemaining(4);
+        }, 1000);
+      }
+    };
+
   const handleAnswerClick = (selectedAnswer) => {
     console.log(selectedAnswer, "selected");
     setSelectedAnswer(selectedAnswer);
@@ -177,24 +191,19 @@ const Question = ({ firstQuestion, auth }) => {
       .then((data) => {
         console.log(data, "from answer click");
 
-
         if (data.message === "Correct!") {
-          setCorrectAnswer(true);
-          success();
-          setScore(score + 1);
-          const currentSeconds = (+data.timer - new Date().getTime()) / 1000;
-const displayAnswer = Math.floor(currentSeconds -  15))
-
+          // const currentSeconds = (+data.timer - new Date().getTime()) / 1000;
+          // setSecondsRemaining(currentSeconds);
           
           if (currentQuestionIndex === 10) {
             handleNextQuestionClick();
-          } else setSecondsRemaining(currentSeconds);
+          } else t4 = setInterval(() => correctDisplay(+data.timer));;
         } else if (data.message === "Wrong!") {
           fail();
           setWrongAnswer(true);
           failHandler();
         } else {
-          gameOver(true);
+          giveUp()
         }
       })
       .catch((err) => {
@@ -436,4 +445,3 @@ const AnswerButton = ({
 };
 
 export default Question;
-
