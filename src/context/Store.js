@@ -156,7 +156,7 @@ export function StoreProvider(props) {
         const seconds2 = Math.floor((differenceInTimes % (1000 * 60)) / 1000);
         // console.log(minutes, "minutes", seconds2, "seconds2");
 
-        if (hours === 0 && minutes === 2 && seconds2 === 0) {
+        if (hours === 0 && minutes <= 2 ) {
           gameZoneEndPoint(activeGame.categoryId);
           clearInterval(interval.current);
         } else if (hours === 0 && minutes === 0 && seconds2 === 20) {
